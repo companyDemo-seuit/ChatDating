@@ -1,0 +1,199 @@
+{
+    "pages": [
+        // pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+        {
+            "path": "pages/tabBar/dashboard/dashboard",
+            "style": {
+                "navigationBarTitleText": "合同页",
+                "app-plus": {
+                    "bounce": "vertical",
+                    "titleNView": {
+                        "buttons": [{
+                            "text": "\ue534",
+                            "fontSrc": "/static/uni.ttf",
+                            "fontSize": "22px",
+                            "color": "#999999"
+                        }]
+                    }
+                },
+                "enablePullDownRefresh": true
+            }
+        },
+        {
+            "path": "pages/tabBar/component/component",
+            "style": {
+                "navigationBarTitleText": "内置组件",
+                "app-plus": {
+                    "bounce": "vertical",
+                    "titleNView": {
+                        "buttons": [{
+                            "text": "\ue534",
+                            "fontSrc": "/static/uni.ttf",
+                            "fontSize": "22px",
+                            "color": "#999999"
+                        }]
+                    }
+                }
+            }
+        },
+        {
+            "path": "pages/tabBar/API/API",
+            "style": {
+                "navigationBarTitleText": "接口",
+                "app-plus": {
+                    "titleNView": {
+                        "buttons": [{
+                            "text": "\ue534",
+                            "fontSrc": "/static/uni.ttf",
+                            "fontSize": "22px",
+                            "color": "#999999"
+                        }]
+                    }
+                }
+            }
+        },
+        {
+            "path": "pages/tabBar/template/template",
+            "style": {
+                "navigationBarTitleText": "模版",
+                "app-plus": {
+                    "titleNView": {
+                        "buttons": [{
+                            "text": "\ue534",
+                            "fontSrc": "/static/uni.ttf",
+                            "fontSize": "22px",
+                            "color": "#999999"
+                        }]
+                    }
+                }
+            }
+        }, {
+            "path": "pages/tabBar/extUI/extUI",
+            "style": {
+                "navigationBarTitleText": "扩展组件",
+                "app-plus": {
+                    "titleNView": {
+                        "buttons": [{
+                            "text": "\ue534",
+                            "fontSrc": "/static/uni.ttf",
+                            "fontSize": "22px",
+                            "color": "#999999"
+                        }]
+                    }
+                }
+            }
+        },
+        {
+            "path": "pages/tabBar/dashboard/contractDetail/contractDetail",
+            "style": {
+                "navigationBarTitleText": "合同详情"
+            }
+        },
+        {
+            "path": "pages/tabBar/dashboard/orderDetail/orderDetail",
+            "style": {
+                "navigationBarTitleText": "订单详情"
+            }
+        },
+        {
+            "path": "pages/tabBar/dashboard/signature/index",
+            "style": {
+                "navigationBarTitleText": "电子签字"
+            }
+        },
+
+        {
+            "path": "platforms/app-plus/shake/shake",
+            "style": {
+                "navigationBarTitleText": "摇一摇"
+            }
+        },
+
+        {
+            "path": "platforms/app-plus/speech/speech",
+            "style": {
+                "navigationBarTitleText": "语音识别"
+            }
+        },
+        {
+            "path": "platforms/app-plus/orientation/orientation",
+            "style": {
+                "navigationBarTitleText": "方向传感器"
+            }
+        },
+        {
+            "path": "platforms/app-plus/proximity/proximity",
+            "style": {
+                "navigationBarTitleText": "距离传感器"
+            }
+        },
+        {
+            "path": "platforms/app-plus/push/push",
+            "style": {
+                "navigationBarTitleText": "推送"
+            }
+        },
+        {
+            "path": "platforms/app-plus/feedback/feedback",
+            "style": {
+                "navigationBarTitleText": "问题反馈"
+            }
+        }
+    ],
+
+
+    "subPackages": [{
+        "root": "pages/login",
+        "pages": [{
+            "path": "login",
+            "style": {
+                "navigationStyle": "custom"
+            }
+        }]
+    }],
+    "globalStyle": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "Hello uniapp",
+        "navigationBarBackgroundColor": "#F8F8F8",
+        "backgroundColor": "#F8F8F8",
+        "backgroundColorTop": "#F4F5F6",
+        "backgroundColorBottom": "#F4F5F6",
+        "mp-alipay": {
+            "titleBarColor": "#FFFFFF"
+        }
+    },
+    "tabBar": {
+        "color": "#7A7E83",
+        "selectedColor": "#007AFF",
+        "borderStyle": "black",
+        "backgroundColor": "#F8F8F8",
+        "list": [{
+                "pagePath": "pages/tabBar/dashboard/dashboard",
+                "iconPath": "static/component.png",
+                "selectedIconPath": "static/componentHL.png",
+                "text": "合同页"
+            }, {
+                "pagePath": "pages/tabBar/component/component",
+                "iconPath": "static/component.png",
+                "selectedIconPath": "static/componentHL.png",
+                "text": "内置组件"
+            },
+            {
+                "pagePath": "pages/tabBar/API/API",
+                "iconPath": "static/api.png",
+                "selectedIconPath": "static/apiHL.png",
+                "text": "接口"
+            }, {
+                "pagePath": "pages/tabBar/extUI/extUI",
+                "iconPath": "static/extui.png",
+                "selectedIconPath": "static/extuiHL.png",
+                "text": "扩展组件"
+            }, {
+                "pagePath": "pages/tabBar/template/template",
+                "iconPath": "static/template.png",
+                "selectedIconPath": "static/templateHL.png",
+                "text": "模板"
+            }
+        ]
+    }
+}
