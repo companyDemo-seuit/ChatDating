@@ -1,351 +1,283 @@
 <template>
-	<view  class="jsfun-record" @tap="showPicker">
-	 <slot></slot>
-	 <!-- 遮罩层 -->
-	 <view class="mask" @tap.stop="closePicker" v-if="isShow" @touchmove.stop.prevent="moveHandle"></view>
-	 <!-- 多选控件 -->
-	 <view class="conbox record" :class="{'pickerShow':isShow}" >
-
-
-
-		<!-- 此处可放置倒计时，可根据需要自行添加 -->
-		<view class="time">
-			{{showRecordTime}}
-		</view>
-		<view class="c999">
-			最短{{minTime}}秒，最长{{maxTime}}秒
-		</view>
-		<view class="record-box"  @touchstart="start" @longpress="record" @touchend="end"  @touchmove.stop.prevent="moveHandle">
-			<span class="stop" @touchstart.stop="stopVoice" v-if="voicePath && playing==1"></span>
-			<span class="paly" @touchstart.stop="playVoice" v-if="voicePath && playing==0"></span>
-			<canvas class="canvas" canvas-id="canvas">
-				<span class="recording"></span>
-			</canvas>
-			<span class="confirm" @touchstart.stop="okClick" v-if="voicePath"></span>
-		</view>
-		<view class="c666 fz32 domess">长按录音</view>
-	 </view>
-	</view>
+<view class="uni-tab-bar" id='dashboard'>
+	<jsfun-record
+	  maxTime="15"
+	  minTime="2"
+	  @okClick="saveRecord"
+	>
+	    <view class="centerwz">录制语音</view>
+	</jsfun-record>
+</view>
 </template>
 <script>
-	const recorderManager = uni.getRecorderManager();//录音
-	const innerAudioContext = uni.createInnerAudioContext();//播放
-	export default {
-		name: 'jsfun-record',
-		props: {
-			voicePath: { //默认地址
-				type: String,
-				default: ''
-			},
-			maxTime: { // 录音最大时长，单位秒
-				type: Number,
-				default: 15
-			},
-			minTime: { // 录音最大时长，单位毫秒
-				type:Number ,
-				default: 5
-			},
-		},
-		data() {
-			return {
-				isShow:false,
-				frame: 50, // 执行绘画的频率，单位毫秒
-				recordTime:0,//录音时长
-				isshowyuan:false,//是否显示圆圈
-				playing:0,//是否播放中
-			}
-		},
-		computed: {
-			showRecordTime() {
-				var strs = "";
-				var m = Math.floor(this.recordTime/60);
-				if(m<10) strs = "0"+m;
+import mediaList from '@/components/tab-nvue/mediaList.vue';
+import jsfunRecord from '@/components/jsfun-record/jsfun-record.vue'
+const tpl = {
+    data0: {
+        "datetime": "40分钟前",
+        "article_type": 0,
+        "title": "不锈钢管订购合同1",
+        "source": "订单号：000002352356",
+        "image_url": "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg?imageView2/3/w/200/h/100/q/90",
+        "comment_count": 0
+    },
+    data1: {
+        "datetime": "一天前",
+        "article_type": 1,
+        "title": "不锈钢管订购合同2",
+        "image_url": "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg?imageView2/3/w/200/h/100/q/90",
+        "source": "订单号：000002352356",
+        "comment_count": 1
+    },
+    data2: {
+        "datetime": "一天前",
+        "article_type": 2,
+        "title": "不锈钢管订购合同3",
+        "image_url": "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/muwu.jpg?imageView2/3/w/200/h/100/q/90",
+        "source": "订单号：000002352356",
+        "comment_count": 1
+    },
+    data3: {
+        "article_type": 3,
+        "image_list": [{
+            "url": "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/cbd.jpg?imageView2/3/w/200/h/100/q/90",
+            "width": 563,
+            "height": 316
+        }, {
+            "url": "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/muwu.jpg?imageView2/3/w/200/h/100/q/90",
+            "width": 641,
+            "height": 360
+        }, {
+            "url": "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg?imageView2/3/w/200/h/100/q/90",
+            "width": 640,
+            "height": 360
+        }],
+        "datetime": "5分钟前",
+        "title": "不锈钢管订购合同4",
+        "source": "订单号：000002352356",
+        "image_url": "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg?imageView2/3/w/200/h/100/q/90",
+        "comment_count": 0
+    },
+    data4: {
+        "datetime": "2小时前",
+        "article_type": 4,
+        "title": "不锈钢管订购合同5",
+        "image_url": "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg?imageView2/3/w/200/h/100/q/90",
+        "source": "订单号：000002352356",
+        "comment_count": 1
+    }
+};
 
-				var s = this.recordTime%60;
-				strs += (s<10) ? ":0"+s : ":"+s;
+export default {
+    components: {
+        mediaList,
+				jsfunRecord
+    },
+    data() {
+        return {
+            scrollLeft: 0,
+            isClickChange: false,
+            tabIndex: 0,
+            newsitems: [],
+            tabBars: [{
+                name: '全部合同',
+                id: 'guanzhu'
+            }, {
+                name: '未完成',
+                id: 'tuijian'
+            }, {
+                name: '已完成',
+                id: 'tiyu'
+            }],
+            arrList: [],
+            title: '下拉刷新 + 加载更多',
+            loadMoreText: "加载中...",
+            showLoadMore: false,
+            max: 0
+        }
+    },
+    onLoad() {
+        this.newsitems = this.randomfn()
+        // this.toRobot()
+    },
+    onUnload() {
+        this.max = 0,
+            this.data = [],
+            this.loadMoreText = "加载更多",
+            this.showLoadMore = false;
+    },
+    // onReachBottom() {
+    // 	debugger
+    // 	console.log("onReachBottom");
+    // 	if (this.max > 40) {
+    // 		this.loadMoreText = "没有更多数据了!"
+    // 		return;
+    // 	}
+    // 	this.showLoadMore = true;
+    // 	setTimeout(() => {
+    // 		this.setDate();
+    // 	}, 300);
+    // },
+    onPullDownRefresh() {
+        // this.toRobot()
+    },
+    methods: {
+			saveRecord: function(recordPath) {
+			 console.log("===音频文件地址："+recordPath+"===")
+			 //do... 可以使用 uni.uploadFile 接口上传到服务器
+	 },
+        toRobot() {
+            // this.addMessage('home', info, false);
+            var apiUrl = 'http://222.73.22.8:43433/api/dashboardList?picType=';
+            uni.request({
+                url: apiUrl,
+                data: {
+                    // "key": 'acfbca724ea1b5db96d2eef88ce677dc',
+                    // "info": info,
+                    // "userid": 'uni-test'
+                },
+                success: (res) => {
+                    console.log("data", res);
+                    this.arrList = res.data.data.list
+                    uni.stopPullDownRefresh();
+                    console.log('request success:' + this.arrList);
+                },
+                fail: (err) => {
+                    console.log('request fail', err);
+                    uni.showModal({
+                        content: err.errMsg,
+                        showCancel: false
+                    })
+                }
+            });
+        },
+        // setDate() {
+        // 	let data = [];
+        // 	this.max += 10;
+        // 	for (var i = this.max - 9; i < this.max + 1; i++) {
+        // 		data.push(i)
+        // 	}
+        // 	debugger
+        // 	this.arrList = this.arrList.concat(data);
+        // },
+        onPullDownRefresh() {
+            console.log('refresh');
+            setTimeout(function() {
+                uni.stopPullDownRefresh();
+            }, 1000);
+        },
+        goDetail(e) {
+            uni.navigateTo({
+                url: '/pages/tabBar/dashboard/contractDetail/contractDetail?title=' + e.title
+            });
+        },
+        close(index1, index2) {
+            uni.showModal({
+                content: '是否删除本条信息？',
+                success: (res) => {
+                    if (res.confirm) {
+                        this.newsitems[index1].data.splice(index2, 1);
+                    }
+                }
+            })
+        },
+        loadMore(e) {
+            setTimeout(() => {
+                this.addData(e);
+            }, 1200);
+        },
+        addData(e) {
+            if (this.newsitems[e].data.length > 30) {
+                this.newsitems[e].loadingText = '没有更多了';
+                return;
+            }
+            for (let i = 1; i <= 10; i++) {
+                this.newsitems[e].data.push(tpl['data' + Math.floor(Math.random() * 5)]);
+            }
+        },
+        async changeTab(e) {
+            let index = e.target.current;
+            if (this.newsitems[index].data.length === 0) {
+                this.addData(index)
+            }
+            if (this.isClickChange) {
+                this.tabIndex = index;
+                this.isClickChange = false;
+                return;
+            }
+            let tabBar = await this.getElSize("tab-bar"),
+                tabBarScrollLeft = tabBar.scrollLeft;
+            let width = 0;
 
-				return strs
-			}
-		},
-		watch: {
-			//这里需要监听默认值的改变，重新初始化
-		  //   defaultArr(val) {
-				// console.log(val);
-				// this.initValue();
-		  //   }
-		},
-		onLoad() {
-			var _this = this;
-
-			//获取录音权限
-			uni.authorize({
-				scope: 'scope.record',
-				success() {
-				}
-			})
-
-			//初始化
-			this.initValue();
-
-		},
-		onReady() {
-			var _this = this;
-
-			//录音停止事件
-			recorderManager.onStop(function (res) {
-				console.log('recorder stop' + JSON.stringify(res));
-				_this.voicePath = res.tempFilePath;
-			});
-
-
-			//根据canvas 动态中心点
-			var query = uni.createSelectorQuery();
-			query.select(".canvas").boundingClientRect()
-			query.exec(function(res){
-				//这里原来使用比例计算发现有误差，所以采用下边的中心点计算
-				//_this.bili = res[0].width / 100;
-
-				_this.tempw = res[0].width;//使用canvas的宽度计算中心点的位置
-				_this.temph = res[0].height;
-			})
-			//根据中心图片的大小计算圆环的大小
-			var query = uni.createSelectorQuery();
-			query.select(".recording").boundingClientRect()
-			query.exec(function(res){
-				_this.tempw1 = res[0].width;//使用点按图形的宽度计算圆环的宽高
-			})
-
-
-		},
-		methods: {
-			moveHandle(){
-				return false;
-			},
-			//组件数据初始化  进入时、关闭时调用初始化
-			initValue(){
-
-			},
-			//显示组件
-			showPicker(){
-				setTimeout(() => {
-				  this.isShow = true;
-				}, 100);
-			},
-			//关闭组件
-			closePicker(){
-				this.isShow = false;
-				//点遮罩 点取消关闭说明用户不想修改，所以这里对数据进行初始化
-				this.initValue();
-				this.stopVoice();
-			},
-			//点击确定
-			okClick(){
-				// var data = {},list = {},textStr = "",indexStr = "";
-				this.$emit('okClick',this.voicePath)
-
-				//确定后更新默认初始值,这样再次进入默认初值就是最后选择的
-				// this.defaultArr = textStr;
-				//关闭
-				this.closePicker();
-			},
-
-
-			start: function() {
-				this.stopVoice();
-				this.voicePath = "";//音频地址
-				this.recordTime = 0;
-				//生成canvas对象
-				this.canvasObj = uni.createCanvasContext('canvas');
-			},
-			end: function() {
-				let recordTime =  this.recordTime;
-
-				clearTimeout(this.timeObj); //清除计时器
-				clearInterval(this.drawObj); //清除画布动画
-				this.recordTime = 0;//清除计时
-				this.isshowyuan = false;//隐藏圆圈
-				//清除canvas内容 方式一：不知道为啥 不起作用
-				//this.canvasObj.clearRect(0,0,this.canvasObj.width,this.canvasObj.height);
-				//清除canvas内容 方式二：填充canvas为白色
-				this.canvasObj.setFillStyle('#fff')
-				this.canvasObj.fillRect(0, 0, this.canvasObj.width,this.canvasObj.height)
-				this.canvasObj.draw()
-
-				if(recordTime < this.minTime ){
-					if (recordTime<=0) {
-						//==点击事件==;
-						return false;
-					}
-					//==小于5秒==;
-					uni.showToast({
-						title:"不能小于"+this.minTime+"秒,请重新录制",
-						icon:"none"
-					})
-					return false;
-				}
-
-
-				recorderManager.stop();
-			},
-			record: function() {
-				let _this = this;
-
-				_this.isshowyuan = true
-				// 开始录音
-                recorderManager.start();
-
-				_this.timeObj = setInterval(function() {
-					_this.recordTime ++;
-					if(_this.recordTime  == _this.maxTime) _this.end();
-				},1000);
-
-				//中心点坐标 这里如果直接除2发现位置有偏差，目前还没明白为什么要减1
-				let pianyi = 0
-				switch(uni.getSystemInfoSync().platform){
-					case 'android': pianyi=0;break;
-					case 'ios':pianyi=1;break;
-					default:pianyi=1; break;
-				}
-				let centerX = _this.tempw/2 + pianyi;
-				let centerY = _this.temph/2 + pianyi;
-				let yuanhuanW = _this.tempw1/2+4;//圆环的半径  中间图片的宽度/2 + 4
-
-				// 录音过程圆圈动画的背景园
-				_this.canvasObj.beginPath();
-				_this.canvasObj.setStrokeStyle("#fe3b54");
-				_this.canvasObj.setGlobalAlpha(0.3)
-				_this.canvasObj.setLineWidth(3);
-				_this.canvasObj.arc(centerX,centerY, yuanhuanW , 0, 2 * Math.PI);
-				_this.canvasObj.stroke();
-				_this.canvasObj.draw();
-
-				// 录音过程圆圈动画
-				let angle = -0.5;
-				_this.drawObj = setInterval(function() {
-					_this.canvasObj.beginPath();
-					_this.canvasObj.setStrokeStyle("#fe3b54");
-					_this.canvasObj.setGlobalAlpha(1)
-					_this.canvasObj.setLineWidth(3);
-					_this.canvasObj.arc(centerX,centerY, yuanhuanW , -0.5 * Math.PI, (angle += 2 / (_this.maxTime * 1000 / _this.frame)) * Math.PI, false);
-					_this.canvasObj.stroke();
-					_this.canvasObj.draw(true);
-				}, _this.frame);
-
-
-			},
-			playVoice() {
-				if (this.voicePath) {
-					innerAudioContext.src = this.voicePath;
-					innerAudioContext.play();
-					this.playing = 1;
-				}
-			},
-			stopVoice() {
-				innerAudioContext.stop();
-				this.playing = 0;
-			},
-
-
-		}
-	}
+            for (let i = 0; i < index; i++) {
+                let result = await this.getElSize(this.tabBars[i].id);
+                width += result.width;
+            }
+            let winWidth = uni.getSystemInfoSync().windowWidth,
+                nowElement = await this.getElSize(this.tabBars[index].id),
+                nowWidth = nowElement.width;
+            if (width + nowWidth - tabBarScrollLeft > winWidth) {
+                this.scrollLeft = width + nowWidth - winWidth;
+            }
+            if (width < tabBarScrollLeft) {
+                this.scrollLeft = width;
+            }
+            this.isClickChange = false;
+            this.tabIndex = index; //一旦访问data就会出问题
+        },
+        getElSize(id) { //得到元素的size
+            return new Promise((res, rej) => {
+                uni.createSelectorQuery().select("#" + id).fields({
+                    size: true,
+                    scrollOffset: true
+                }, (data) => {
+                    res(data);
+                }).exec();
+            })
+        },
+        async tapTab(e) { //点击tab-bar
+            let tabIndex = e.target.dataset.current;
+            if (this.newsitems[tabIndex].data.length === 0) {
+                this.addData(tabIndex)
+            }
+            if (this.tabIndex === tabIndex) {
+                return false;
+            } else {
+                let tabBar = await this.getElSize("tab-bar"),
+                    tabBarScrollLeft = tabBar.scrollLeft; //点击的时候记录并设置scrollLeft
+                this.scrollLeft = tabBarScrollLeft;
+                this.isClickChange = true;
+                this.tabIndex = tabIndex;
+            }
+        },
+        randomfn() {
+            let ary = [];
+            for (let i = 0, length = this.tabBars.length; i < length; i++) {
+                let aryItem = {
+                    loadingText: '加载更多...',
+                    data: []
+                };
+                if (i < 1) {
+                    for (let j = 1; j <= 10; j++) {
+                        aryItem.data.push(tpl['data' + Math.floor(Math.random() * 5)]);
+                    }
+                }
+                ary.push(aryItem);
+            }
+            return ary;
+        }
+    }
+}
 </script>
 
-<style lang="scss">
-	.jsfun-record {
+<style>
+.uni-tab-bar-loading {
+    text-align: center;
+    font-size: 28upx;
+    color: #999;
+}
 
-       .mask {
-		  position: fixed;
-		  z-index: 1000;
-		  top: 0;
-		  right: 0;
-		  left: 0;
-		  bottom: 0;
-		  background: rgba(0, 0, 0, 0.6);
-		}
-
-        .conbox{
-			transition: all .3s ease;
-			transform: translateY(100%);
-			&.pickerShow{
-			   transform:translateY(0);
-			}
-
-			position: fixed;
-			z-index: 1000;
-			right: 0;
-			left: 0;
-			bottom: 0;
-			background: #fff;
-		}
-
-		.c666{color:#666;}
-		.c999{color:#999;}
-		.fz28{font-size: 28upx;}
-		.fz32{font-size: 32upx;}
-
-
-        .record{
-			text-align: center;
-
-			.time {
-				text-align: center;
-				font-size: 60upx;
-				color: #000;
-				line-height: 100upx;
-				margin-top:50upx;
-			}
-			.domess{margin-bottom:50upx;}
-
-
-			.record-box {
-				display: flex;
-				flex-direction: row;
-				justify-content: center;
-			}
-			canvas {
-				margin:10upx 60upx;
-				position: relative;
-				width: 200upx;
-				height: 200upx;
-				z-index: 10;
-				.recording{
-					position: absolute;
-					top: 20upx;
-					left: 20upx;
-					width: 160upx;
-					height: 160upx;
-					border: 1px dashed #fe3b54;
-					border-radius: 100upx;
-					background:#fe3b54 url(./static/jsfun-record/recording.png) no-repeat 50% 50%;
-					background-size: 50% 50%;
-					z-index: 100;
-				}
-			}
-
-			.btncom{
-				margin-top: 70upx;
-				width: 80upx;
-				height: 80upx;
-				border-radius: 80upx;
-			}
-			.stop{
-				 @extend .btncom;
-				background:url(./static/jsfun-record/stop.png) no-repeat;
-				background-size: 100% 100%;
-			}
-			.paly{
-				 @extend .btncom;
-				background:url(./static/jsfun-record/play.png) no-repeat;
-				background-size: 100% 100%;
-			}
-			.confirm{
-				 @extend .btncom;
-				background:url(./static/jsfun-record/confirm.png) no-repeat 100% 100%;
-				background-size: 100% 100%;
-			}
-
-
-		}
-
-	}
+.swbg {
+    background: linear-gradient(rgba(49, 147, 186, 1), rgba(117, 216, 250,1));
+}
 </style>
