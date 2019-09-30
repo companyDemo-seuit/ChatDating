@@ -29,8 +29,6 @@
 </view>
 </template>
 <script>
-
-
 var WXBizDataCrypt = require('@/components/WXBizDataCrypt/WXBizDataCrypt.js');
 import {
     mapState,
@@ -43,7 +41,8 @@ export default {
             title: 'getUserInfo',
             hasUserInfo: false,
             userInfo: {},
-						 login_code : '',
+            login_code: '',
+            signature: ''
         }
     },
     computed: {
@@ -51,20 +50,20 @@ export default {
             loginProvider: state => state.loginProvider
         })
     },
-		onLoad: function() {
+    onLoad: function() {
 
-				var that = this;
-				uni.login({
-						success: function(res) {
+        var that = this;
+        uni.login({
+            success: function(res) {
 
-								// 获取code
-								console.log(JSON.stringify(res));
-								//{"errMsg":"login:ok","code":"071JIp1t1pv马赛克t1Ran1t1JIp1l"}
+                // 获取code
+                console.log(JSON.stringify(res));
+                //{"errMsg":"login:ok","code":"071JIp1t1pv马赛克t1Ran1t1JIp1l"}
 
-								that.login_code = res.code;
-						}
-				});
-		},
+                that.login_code = res.code;
+            }
+        });
+    },
     methods: {
         // 获取用户信息 API 在小程序可直接使用，在 5+App 里面需要先登录才能调用
         getUserInfo() {
@@ -74,6 +73,7 @@ export default {
                     console.log('getUserInfo success', result);
                     this.hasUserInfo = true;
                     this.userInfo = result.userInfo;
+                    uni.setStorageSync('userInfo', result.userInfo)
                 },
                 fail: (error) => {
                     console.log('getUserInfo fail', error);
@@ -101,8 +101,22 @@ export default {
             }
             this.hasUserInfo = true;
             this.userInfo = result.detail.userInfo;
+            this.$request({
+                    url: '/wx/login',
+                    data: {
+                        userName: result.detail.userInfo.nickName,
+                        password: result.detail.signature,
+
+                    }
+                }, 'POST')
+                .then(res => {
+                    this.signature = result.detail.signature
+                    console.log(res);
+                });
+
         },
         getPhoneNumber: function(e) {
+            var that = this
             console.log(e);
             if (e.detail.errMsg == 'getPhoneNumber:fail user deny') {
                 console.log('用户拒绝提供手机号');
@@ -122,41 +136,40 @@ export default {
                 //Vue.prototype.WX_AUTH_URL                     = 'https://api.weixin.qq.com/sns/jscode2session';
 
                 var JSCODE = this.login_code;
-                var APPID = this.APPID;
-                var SECRET = this.SECRET;
-                var wx_author_url = this.WX_AUTH_URL + '?appid=' + APPID + '&secret=' + SECRET + '&js_code=' + JSCODE + '&grant_type=authorization_code';
+                // var APPID = this.APPID;
+                // var SECRET = this.SECRET;
+                // var wx_author_url = this.WX_AUTH_URL + '?appid=' + APPID + '&secret=' + SECRET + '&js_code=' + JSCODE + '&grant_type=authorization_code';
+                //
+                // 		console.log(wx_author_url);
 
-										console.log(wx_author_url);
-                uni.request({
-                    url: wx_author_url,
-                    success(re) {
-                        console.log('session_key:' + re.data.session_key);
-
-                        var appId = APPID;
-                        var sessionKey = re.data.session_key;
-
+                that.$request({
+                        url: '/wx/jscode2session',
+                        data: {
+                            JSCODE: JSCODE,
+                        }
+                    }, 'GET')
+                    .then(res => {
+                        var appId = res.appid;
+                        var sessionKey = JSON.parse(res.session_key).session_key;
+                        console.log(appId);
+                        console.log(sessionKey);
                         var pc = new WXBizDataCrypt(appId, sessionKey);
-                        var data = pc.decryptData(encryptedData, iv);
+                        var telData = pc.decryptData(encryptedData, iv);
+                        console.log('解密后 data: ', JSON.stringify(telData));
 
-                        console.log('------------------->');
-                        console.log('解密后 data: ', data);
-                        // console.log('解密后 data: ', JSON.stringify(data));
-                        /*
-															 {
-																	 "phoneNumber": "139马赛克9490",
-																	 "purePhoneNumber": "139马赛克9490",
-																	 "countryCode": "86",
-																	 "watermark": {
-																			 "timestamp": 1560577589,
-																			 "appid": "wxb1a马赛克12bfc90a"
-																	 }
-															 }
-													 */
-                        console.log('------------------->');
+                        this.$request({
+                                url: '/wx/setTel',
+                                data: {
+                                    phoneNumber: telData.phoneNumber,
+                                    password: this.signature,
+                                }
+                            }, 'POST')
+                            .then(res => {
+                                console.log(res);
+                            });
 
-                    }
-                });
-                ////////////////////////////////////////////////////////////////////////////////
+                    });
+
 
             }
 

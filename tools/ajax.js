@@ -10,7 +10,7 @@ import config from "../config.js";
 
 function request(params, method) {
 
-  let token = uni.getStorageSync("token") || '3f2c4b212e089a766028c7e89d74c013ceecb9b3';
+  // let token = uni.getStorageSync("token") || '3f2c4b212e089a766028c7e89d74c013ceecb9b3';
 
   return new Promise(function(resolve, reject) {
     // 根据具体业务需求更改必要参数
@@ -41,6 +41,7 @@ function request(params, method) {
     */
 
     // $store.commit("switch_loading", "1")
+    let sessionId = uni.getStorageSync('sessionId') || ''
     uni.request({
       url: config.base_url + params.url,
       // url:"http://localhost/index.php",
@@ -48,7 +49,7 @@ function request(params, method) {
       async: true,
       method: method,
       header: {
-        "Authorization": "sessionId "+window.sessionStorage.getItem('sessionId')  || '',
+        "Authorization": "sessionId "+ sessionId,
         "content-type": "application/json;charset=UTF-8"
       },
       success(res) {

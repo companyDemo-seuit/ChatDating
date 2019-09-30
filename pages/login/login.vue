@@ -72,7 +72,7 @@ export default {
               .then(res => {
                 // this.city = res
                 console.log(res);
-                window.sessionStorage.setItem('sessionId',res.sessionId)
+                   uni.setStorageSync('sessionId', res.sessionId)
               });
         },
 
