@@ -6,8 +6,6 @@ export default {
         //     url: 'pages/tabBar/component/component'
         // });
 
-
-
         let sessionId = uni.getStorageSync('sessionId') || ''
 
         if (sessionId == '') {

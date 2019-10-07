@@ -22,7 +22,7 @@
                     <view class="flex-item flex-item-V bg_w">为了您账号的安全性，请绑定手机号码</view>
                     <view class="flex-item flex-item-V bg_w">
                         <view class="uni-flex uni-row">
-                            <view class="flex-item " style="flex:1;padding: 20px;height: 1;"> <button  @click="jumpTel" style="font-size: 12px;">跳过</button></view>
+                            <view class="flex-item " style="flex:1;padding: 20px;height: 1;"> <button @click="jumpTel" style="font-size: 12px;">跳过</button></view>
                             <view class="flex-item " style="flex:1;padding: 20px;height: 1;"><button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" style="font-size: 12px;">确定</button></view>
                         </view>
 
@@ -48,8 +48,7 @@ export default {
         return {
             iconPath: 'url(https://aprils.oss-cn-beijing.aliyuncs.com/1px.png) repeat center / contain',
             hasUserInfo: false,
-            showgetPhoneNumber: true,
-            showgetPhoneNumber: true,
+            showgetPhoneNumber: false,
             userInfo: {},
             login_code: '',
             signature: ''
@@ -130,9 +129,12 @@ export default {
         },
         jumpTel() {
             this.showgetPhoneNumber = false
-          uni.redirectTo({
-              url: 'pages/tabBar/dashboard/dashboard'
-          });
+            uni.navigateBack({
+                delta: 1
+            });
+            // uni.redirectTo({
+            //     url: 'pages/tabBar/dashboard/dashboard'
+            // });
         },
         getPhoneNumber: function(e) {
             var that = this
@@ -186,8 +188,8 @@ export default {
                             .then(res => {
                                 that.showgetPhoneNumber = false
                                 console.log(res);
-                                uni.redirectTo({
-                                    url: 'pages/tabBar/dashboard/dashboard'
+                                uni.navigateBack({
+                                    delta: 1
                                 });
                             });
 
