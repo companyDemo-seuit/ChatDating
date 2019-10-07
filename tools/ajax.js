@@ -62,15 +62,23 @@ function request(params, method) {
             title: '服务器错误:' + res.statusCode,
             icon: 'none'
           })
+          uni.removeStorageSync('sessionId');
+          uni.redirectTo({
+              url: 'pages/login/login'
+          });
         }
 
       },
-      fail() {
+      fail(e) {
         uni.showToast({
           title: '服务器错误',
           icon: "none"
         })
         // 失败回调
+
+        uni.redirectTo({
+            url: 'pages/login/login'
+        });
       },
       complete() {
         // 无论成功或失败 只要请求完成的 回调

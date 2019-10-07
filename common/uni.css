@@ -19,7 +19,9 @@
     font-family: iconfont;
     margin-left: 20upx;
 }
-
+.bg_w {
+  background: #FFF;
+}
 .checkboxing {
     animation: sploosh 2s linear infinite;
 }

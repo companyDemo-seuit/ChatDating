@@ -1,107 +1,129 @@
 <template>
-	<view>
-		<page-head title="swiper,可滑动视图"></page-head>
-		 <button type="primary" @click.native="swiper_index = 0">上一页{{swiper_index}}<text class="iconfont">&#xe64a;</text></button>
-		  <button type="primary" @click.native="swiper_index = 1">下一页</button>
-		<view class="uni-margin-wrap">
-			<swiper class="swiper" :current="swiper_index" v-model="swiper_index" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration" @change="asd">
-				<swiper-item>
-					<view class="swiper-item uni-bg-red">A</view>
-				</swiper-item>
-				<swiper-item>
-					<view class="swiper-item uni-bg-green">B</view>
-				</swiper-item>
-				<swiper-item>
-					<view class="swiper-item uni-bg-blue">C</view>
-				</swiper-item>
-			</swiper>
-		</view>
+<view class="example listBg">
+    <view style="padding-top:20px;padding-bottom:40px;">
+        <view class="list-cell " hover-class="uni-list-cell-hover" @click="bindClick" style="margin: 0 25px  0 25px;background:#fff">
 
-		<view class="swiper-list">
-			<view class="uni-list-cell uni-list-cell-pd">
-				<view class="uni-list-cell-db">指示点</view>
-				<switch :checked="indicatorDots" @change="changeIndicatorDots" />
-			</view>
-			<view class="uni-list-cell uni-list-cell-pd">
-				<view class="uni-list-cell-db">自动播放</view>
-				<switch :checked="autoplay" @change="changeAutoplay" />
-			</view>
-		</view>
+            <view style="padding:10px 0" @click="goDetail(newsitem)">
+                <view class="media-list" style="display: flex;width: 100%;">
+                    <view class="uni-list" style="flex: 6;">
+                        <view class="uni-list-cell" hover-class="uni-list-cell-hover">
+                            <view class="uni-media-list">
+                                <view class="uni-media-list-logo">
+                                    <image :src="newsitem.image_url"></image>
+                                </view>
+                                <view class="uni-media-list-body">
+                                    <view class="uni-media-list-text-top">{{newsitem.title}}</view>
+                                    <view class="uni-media-list-text-bottom uni-ellipsis">{{newsitem.title}}</view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                    <view style="flex: 2;">
+                        <view v-show="newsitem.comment_count == 0" class="rcircle_blue">完</view>
+                        <view v-show="newsitem.comment_count == 1" class="rcircle_red">未</view>
+                    </view>
+                </view>
+                <view class="progress-box" style="padding:0px 65px 0px 25px;color: #57bde5;">
+                    <progress percent="80" activeColor="#57bce8" backgroundColor="#e5e6ea" active stroke-width="10" style='border-radius:5px;overflow:hidden;'></progress>
+                    <div class="" style="float:right;position: relative;top: -18px;left: 50px;">80%</div>
+                </view>
+            </view>
+            <view style="padding:10px 0" @click="goDetail(newsitem)">
+                <view class="media-list" style="display: flex;width: 100%;">
+                    <view class="uni-list" style="flex: 6;">
+                        <view class="uni-list-cell" hover-class="uni-list-cell-hover">
+                            <view class="uni-media-list">
+                                <view class="uni-media-list-logo">
+                                    <image :src="newsitem.image_url"></image>
+                                </view>
+                                <view class="uni-media-list-body">
+                                    <view class="uni-media-list-text-top">{{newsitem.title}}</view>
+                                    <view class="uni-media-list-text-bottom uni-ellipsis">{{newsitem.title}}</view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                    <view style="flex: 2;">
+                        <view v-show="newsitem.comment_count == 0" class="rcircle_blue">完</view>
+                        <view v-show="newsitem.comment_count == 1" class="rcircle_red">未</view>
+                    </view>
+                </view>
+                <view class="progress-box" style="padding:0px 65px 0px 25px;color: #57bde5;">
+                    <progress percent="80" activeColor="#57bce8" backgroundColor="#e5e6ea" active stroke-width="10" style='border-radius:5px;overflow:hidden;'></progress>
+                    <div class="" style="float:right;position: relative;top: -18px;left: 50px;">80%</div>
+                </view>
+            </view>
+            <view style="padding:10px 0" @click="goDetail(newsitem)">
+                <view class="media-list" style="display: flex;width: 100%;">
+                    <view class="uni-list" style="flex: 6;">
+                        <view class="uni-list-cell" hover-class="uni-list-cell-hover">
+                            <view class="uni-media-list">
+                                <view class="uni-media-list-logo">
+                                    <image :src="newsitem.image_url"></image>
+                                </view>
+                                <view class="uni-media-list-body">
+                                    <view class="uni-media-list-text-top">{{newsitem.title}}</view>
+                                    <view class="uni-media-list-text-bottom uni-ellipsis">{{newsitem.title}}</view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                    <view style="flex: 2;">
+                        <view v-show="newsitem.comment_count == 0" class="rcircle_blue">完</view>
+                        <view v-show="newsitem.comment_count == 1" class="rcircle_red">未</view>
+                    </view>
+                </view>
+                <view class="progress-box" style="padding:0px 65px 0px 25px;color: #57bde5;">
+                    <progress percent="80" activeColor="#57bce8" backgroundColor="#e5e6ea" active stroke-width="10" style='border-radius:5px;overflow:hidden;'></progress>
+                    <div class="" style="float:right;position: relative;top: -18px;left: 50px;">80%</div>
+                </view>
+            </view>
 
-		<view class="uni-padding-wrap">
-			<view class="uni-common-mt">
-				<text>幻灯片切换时长(ms)</text>
-				<text class="info">{{duration}}</text>
-			</view>
-			<slider @change="durationChange" :value="duration" min="500" max="2000" />
-			<view class="uni-common-mt">
-				<text>自动播放间隔时长(ms)</text>
-				<text class="info">{{interval}}</text>
-			</view>
-			<slider @change="intervalChange" :value="interval" min="2000" max="10000" />
-		</view>
-	</view>
+
+        </view>
+    </view>
+</view>
 </template>
 <script>
-	export default {
-		data() {
-			return {
-				background: ['color1', 'color2', 'color3'],
-				indicatorDots: false,
-				autoplay: false,
-				interval: 2000,
-				duration: 500,
-				swiper_index :0
-			}
-		},
-		methods: {
-			asd(){
+import mediaList from '@/components/tab-nvue/mediaList.vue';
+export default {
+    components: {
+        mediaList
+    },
+    data() {
+        return {
+            newsitem: {
+                "datetime": "40分钟前",
+                "article_type": 0,
+                "title": "不锈钢管订购合同1",
+                "source": "订单号：000002352356",
+                "image_url": "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg?imageView2/3/w/200/h/100/q/90",
+                "comment_count": 0
+            },
+        }
+    },
+    onLoad(e) {
+        this.title = e.title || '';
+    },
+    methods: {
+        goDetail(e) {
+            uni.navigateTo({
+                url: '/pages/tabBar/dashboard/orderDetail/orderDetail?title=' + e.title
+            });
+        },
 
-			},
-			changeIndicatorDots(e) {
-				this.indicatorDots = !this.indicatorDots
-			},
-			changeAutoplay(e) {
-				this.autoplay = !this.autoplay
-			},
-			intervalChange(e) {
-				this.interval = e.target.value
-			},
-			durationChange(e) {
-				this.duration = e.target.value
-			}
-		}
-	}
+    }
+}
 </script>
-
 <style>
-	.uni-margin-wrap {
-		width:490upx;
-		margin:0 auto;
-	}
-	.swiper {
-		height: 700upx;
-	}
-	.swiper-item {
-		display: block;
-		height: 700upx;
-		line-height: 700upx;
-		text-align: center;
-	}
-
-	.swiper-list {
-		margin-top: 40upx;
-		margin-bottom: 0;
-	}
-
-	.uni-common-mt{
-		margin-top:60upx;
-		position:relative;
-	}
-
-	.info {
-		position: absolute;
-		right:20upx;
-	}
-
+/* page {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    background:linear-gradient(top,rgb(49, 147, 186,1) 1%,rgb(117, 216, 250) 99%);
+    background-size:100%
+} */
+.listBg {
+    background: linear-gradient(rgba(49, 147, 186, 1), rgba(117, 216, 250,1));
+}
 </style>
