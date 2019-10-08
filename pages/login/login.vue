@@ -1,7 +1,7 @@
 <template>
 <view class="whf" :style="[{ background: iconPath }]">
     <view class="zai-box">
-        <image src="../../static/zaizai-login/logo.png" mode='aspectFit' class="zai-logo"></image>
+        <!-- <image src="../../static/zaizai-login/logo.png" mode='aspectFit' class="zai-logo"></image> -->
         <!-- <view class="zai-title">LOGO区域</view> -->
         <view class="zai-form">
 
@@ -58,6 +58,19 @@ export default {
 
         var that = this;
 
+        let userName = uni.getStorageSync('userName') || ''
+        let avatarUrl = uni.getStorageSync('avatarUrl') || ''
+        let signature = uni.getStorageSync('signature') || ''
+        console.log(JSON.stringify(userName));
+        console.log(JSON.stringify(signature));
+        if (userName) {
+            this.loginUser(userName, signature, false)
+            let obj = {}
+            obj.avatarUrl = avatarUrl
+            obj.nickName = userName
+            this.userInfo = obj;
+        }
+
         uni.login({
             success: function(res) {
 
@@ -66,6 +79,7 @@ export default {
                 //{"errMsg":"login:ok","code":"071JIp1t1pv马赛克t1Ran1t1JIp1l"}
 
                 that.login_code = res.code;
+
             }
         });
     },
@@ -86,49 +100,51 @@ export default {
             }
             this.hasUserInfo = true;
             this.userInfo = result.detail.userInfo;
-            this.$request({
-                    url: '/wx/login',
-                    data: {
-                        userName: result.detail.userInfo.nickName,
-                        password: result.detail.signature,
-
-                    }
-                }, 'POST')
-                .then(res => {
-                    var that = this
-                    this.signature = result.detail.signature
-                    uni.setStorageSync('sessionId', res.data.token)
-                    if (res.data.rows.length > 0 && !res.data.rows[0].iphoneNum) {
-
-                        that.togglePopup(true)
-                        // uni.showModal({
-                        //     title: "绑定手机号码",
-                        //     content: "为了您账号的安全性，请绑定手机号码",
-                        //     confirmText: "确定",
-                        //     cancelText: "取消",
-                        //     success(res) {
-                        //         if (res.confirm) {
-                        //             // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
-                        //             that.togglePopup(true)
-                        //         }
-                        //     }
-                        //
-                        // })
-                    } else {
-                        // uni.switchTab({
-                        //     url: 'pages/tabBar/dashboard/dashboard'
-                        // });
-                        uni.navigateBack({
-                            delta: 1
-                        });
-                    }
-                    console.log(res);
-                });
+            uni.setStorageSync('userName', result.detail.userInfo.nickName)
+            uni.setStorageSync('avatarUrl', result.detail.userInfo.avatarUrl)
+            uni.setStorageSync('signature', result.detail.signature)
+            this.loginUser(result.detail.userInfo.nickName, result.detail.signature, true)
 
 
         },
+
+        loginUser(nickName, signature, flag) {
+            this.$request({
+                    url: '/wx/login',
+                    data: {
+                        userName: nickName || '',
+                        signature: signature || ''
+                    }
+                }, 'POST')
+                .then(res => {
+                  console.log(res)
+                    var that = this
+                    that.signature = signature || ''
+                    uni.setStorageSync('sessionId', res.data.token)
+                    if(flag){
+                      if ((res.data.rows.length > 0 && !res.data.rows[0].iphoneNum) || res.data.rows.length == 0) {
+                          that.togglePopup(true)
+                      } else {
+                          uni.navigateBack({
+                              delta: 1
+                          });
+                      }
+                    }else{
+                      if (res.data.rows.length > 0 && !res.data.rows[0].iphoneNum){
+                        console.log('无手机号或者未登录')
+                          that.togglePopup(true)
+                      } else if (res.data.rows.length > 0 && res.data.rows[0].iphoneNum) {
+                          uni.navigateBack({
+                              delta: 1
+                          });
+                      }
+                    }
+
+                    console.log(res);
+
+                });
+        },
         jumpTel() {
-            this.showgetPhoneNumber = false
             uni.navigateBack({
                 delta: 1
             });
@@ -182,7 +198,7 @@ export default {
                                 url: '/wx/setTel',
                                 data: {
                                     phoneNumber: telData.phoneNumber,
-                                    password: this.signature,
+                                    signature: this.signature,
                                 }
                             }, 'POST')
                             .then(res => {
@@ -233,7 +249,8 @@ export default {
 }
 
 .zai-form {
-    margin-top: 300upx;
+    position: relative;
+    padding-top: 300upx;
 }
 
 .zai-input {

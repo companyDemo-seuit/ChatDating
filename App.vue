@@ -6,19 +6,27 @@ export default {
         //     url: 'pages/tabBar/component/component'
         // });
 
-        let sessionId = uni.getStorageSync('sessionId') || ''
 
-        if (sessionId == '') {
-            uni.navigateTo({
-                url: 'pages/login/login'
-            });
-        } else {
-            var that = this
-            that.$request({
-                    url: '/wx/openapp',
-                    data: {}
-                }, 'GET')
-        }
+        // let sessionId = uni.getStorageSync('sessionId') || ''
+        //
+        // if (sessionId == '') {
+        //     uni.navigateTo({
+        //         url: 'pages/login/login'
+        //     });
+        // } else {
+        //     var that = this
+        //     that.$request({
+        //             url: '/wx/openapp',
+        //             data: {}
+        //         }, 'GET')
+        // }
+
+        var that = this
+        that.$request({
+                url: '/wx/openapp',
+                data: {}
+            }, 'GET')
+
         // #ifdef APP-PLUS
         // 锁定屏幕方向
 

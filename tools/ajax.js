@@ -49,7 +49,7 @@ function request(params, method) {
       async: true,
       method: method,
       header: {
-        "Authorization": "sessionId "+ sessionId,
+        "Authorization": "Bearer " + sessionId,
         "content-type": "application/json;charset=UTF-8"
       },
       success(res) {
@@ -63,22 +63,26 @@ function request(params, method) {
             icon: 'none'
           })
           uni.removeStorageSync('sessionId');
-          uni.redirectTo({
-              url: 'pages/login/login'
+          uni.removeStorageSync('userName');
+          uni.removeStorageSync('signature');
+          uni.navigateTo({
+              url: '/pages/login/login'
           });
         }
 
       },
       fail(e) {
         uni.showToast({
-          title: '服务器错误',
+          title: JSON.stringify(e),
           icon: "none"
         })
+
+        console.log(JSON.stringify(e))
         // 失败回调
 
-        uni.redirectTo({
-            url: 'pages/login/login'
-        });
+        // uni.navigateTo({
+        //     url: '/pages/login/login'
+        // });
       },
       complete() {
         // 无论成功或失败 只要请求完成的 回调

@@ -19,8 +19,8 @@ Vue.prototype.$backgroundAudioData = {
 import $request from "./tools/ajax.js";
 Vue.prototype.$request = $request;
 
-// Vue.prototype.APPID = 'wx8064aa16d29d246f';
-Vue.prototype.APPID = 'wxe7fef63c5e431a25';
+Vue.prototype.APPID = 'wx8064aa16d29d246f';
+// Vue.prototype.APPID = 'wxe7fef63c5e431a25';
 Vue.prototype.SECRET = '9230a89501ce764064c808cd0f6b301a';
 Vue.prototype.WX_AUTH_URL = 'https://api.weixin.qq.com/sns/jscode2session';
 
