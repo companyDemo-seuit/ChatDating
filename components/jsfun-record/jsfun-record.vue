@@ -28,6 +28,7 @@
 <script>
 const recorderManager = uni.getRecorderManager(); //录音
 const innerAudioContext = uni.createInnerAudioContext(); //播放
+import config from "@/config.js";
 export default {
     name: 'jsfun-record',
     props: {
@@ -91,6 +92,32 @@ export default {
         recorderManager.onStop(function(res) {
             console.log('recorder stop' + JSON.stringify(res));
             _this.voicePath = res.tempFilePath;
+
+            uni.showModal({
+                title: "录音完毕",
+                content: "是否命令小丘射向比特墙？",
+                confirmText: "立即",
+                cancelText: "取消",
+                success(res) {
+                    if (res.confirm) {
+                        let sessionId = uni.getStorageSync('sessionId') || ''
+                        uni.uploadFile({
+                            url: config.base_url + '/file/upload',
+                            filePath: _this.voicePath,
+                            name: 'file',
+                            formData: {},
+                            header: {
+                                "Authorization": "Bearer " + sessionId,
+                            },
+                            success: (uploadFileRes) => {
+                                console.log(uploadFileRes.data);
+                            }
+                        });
+                    }
+                }
+            })
+
+
         });
 
 
@@ -185,13 +212,17 @@ export default {
 
 
             recorderManager.stop();
+
         },
         record: function() {
             let _this = this;
 
             _this.isshowyuan = true
             // 开始录音
-            recorderManager.start();
+            recorderManager.start({
+                format: "mp3",
+                sampleRate: 16000
+            })
 
             _this.timeObj = setInterval(function() {
                 _this.recordTime++;
@@ -246,13 +277,13 @@ export default {
             }
         },
         stopVoice() {
-          // #ifdef MP-WEIXIN
-          uni.vibrateShort({
-              success: function() {
-                  console.log('success');
-              }
-          });
-          // #endif
+            // #ifdef MP-WEIXIN
+            uni.vibrateShort({
+                success: function() {
+                    console.log('success');
+                }
+            });
+            // #endif
             innerAudioContext.stop();
             this.playing = 0;
         },
